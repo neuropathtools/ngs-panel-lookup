@@ -1,5 +1,5 @@
 [README.md](https://github.com/user-attachments/files/30790251/README.md)
-Gene coverage lookup across targeted NGS panels
+
 # NGS Panel Lookup
 
 A single-page reference tool for checking which targeted NGS panel covers a given gene, and with what type of analysis.
