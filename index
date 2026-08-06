@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NGS Panel Lookup</title>
+<style>
+  :root{
+    --bg:#f4f4fb;
+    --card-bg:#ffffff;
+    --line:#dcdcee;
+    --text:#20223f;
+    --dim:#6d6f92;
+    --opa:#7a5fd6;
+    --oca:#2f7fd4;
+    --cch:#b martin;
+    --cch2:#b04fc0;
+    --odp:#c2841f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(820px 460px at 10% -10%, #e7e2fb 0%, transparent 60%),
+      radial-gradient(680px 400px at 95% 2%, #dfeafb 0%, transparent 58%),
+      var(--bg);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.5;
+    padding:34px 20px 70px;
+    min-height:100vh;
+  }
+  .wrap{max-width:740px;margin:0 auto}
+  header{margin-bottom:14px}
+  h1{font-size:1.5rem;font-weight:600;margin:0 0 5px;letter-spacing:-.01em}
+  .sub{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dim);margin:0;
+  }
+  .rule{height:2px;background:linear-gradient(90deg,var(--opa),var(--oca) 38%,var(--cch2) 70%,var(--odp));margin:0 0 24px;opacity:.85;border-radius:2px}
+
+  input[type=text]{
+    width:100%;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:1.4rem;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:17px 19px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card-bg);
+    color:var(--text);
+    box-shadow:0 1px 2px rgba(32,34,63,.05);
+  }
+  input[type=text]:focus{outline:none;border-color:var(--oca);box-shadow:0 0 0 3px rgba(47,127,212,.16)}
+  input::placeholder{color:#a9aac6;font-weight:400;letter-spacing:.05em}
+
+  .hint{font-size:.82rem;color:var(--dim);margin:11px 0 24px}
+
+  .suggest{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:7px}
+  .suggest button{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.78rem;letter-spacing:.06em;
+    background:var(--card-bg);border:1px solid var(--line);
+    border-radius:6px;padding:6px 11px;cursor:pointer;color:var(--text);
+    transition:.15s;
+  }
+  .suggest button:hover{background:var(--oca);border-color:var(--oca);color:#fff}
+
+  .gene-title{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:1.75rem;font-weight:700;letter-spacing:.1em;
+    margin:28px 0 3px;
+  }
+  .verdict{font-size:.88rem;color:var(--dim);margin:0 0 20px}
+
+  .panel{
+    background:var(--card-bg);
+    border:1px solid var(--line);
+    border-left:4px solid var(--line);
+    border-radius:10px;
+    padding:14px 17px;
+    margin-bottom:11px;
+    box-shadow:0 1px 2px rgba(32,34,63,.04);
+  }
+  .panel.hit-opa{border-left-color:var(--opa)}
+  .panel.hit-oca{border-left-color:var(--oca)}
+  .panel.hit-cch{border-left-color:var(--cch2)}
+  .panel.hit-odp{border-left-color:var(--odp)}
+  .panel.miss{opacity:.5;box-shadow:none}
+
+  .pname{
+    font-size:.94rem;font-weight:600;margin:0;
+    display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  }
+  .pcode{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.66rem;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--dim);font-weight:400;white-space:nowrap;
+  }
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .tag{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.67rem;letter-spacing:.06em;
+    padding:4px 9px;border-radius:5px;border:1px solid;
+  }
+  .tag.hot{color:#5a42ab;border-color:#c9bdf1;background:#f0ecfd}
+  .tag.exon{color:#1f5f9e;border-color:#b8d4f0;background:#eaf3fc}
+  .tag.cnv{color:#8b3a98;border-color:#e5bfea;background:#faeffb}
+  .tag.fus{color:#1f7a70;border-color:#b3ddd7;background:#eaf7f5}
+  .tag.loh{color:#96650f;border-color:#e8cf9e;background:#fdf5e6}
+  .none{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.71rem;letter-spacing:.06em;color:var(--dim);
+    display:inline-block;margin-top:8px;
+  }
+
+  .note{
+    margin-top:30px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:.79rem;color:var(--dim);
+  }
+  .note b{color:var(--text);font-weight:600}
+  .note p{margin:0 0 7px}
+  .empty{color:var(--dim);font-size:.9rem;margin-top:26px}
+  footer{
+    margin-top:22px;padding-top:13px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
+    color:#9799b8;
+  }
+  @media (max-width:520px){
+    input[type=text]{font-size:1.1rem}
+    .gene-title{font-size:1.4rem}
+    .pname{flex-direction:column;gap:3px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>NGS Panel Lookup</h1>
+  <p class="sub">OPA &middot; OCA v3 GX &middot; Oncomine Childhood &middot; OncoDEEP</p>
+</header>
+<div class="rule"></div>
+
+<input type="text" id="q" placeholder="Enter a gene..." autocomplete="off" spellcheck="false" autofocus>
+<p class="hint">Search by symbol (TP53, CDKN2A, IDH1) to see which panel covers it and how.</p>
+
+<div id="out"></div>
+
+<div class="note">
+  <p><b>Sensitivity:</b> point variants VAF &ge;5% &middot; CNV &ge;6 copies with tumour cellularity &gt;50% &middot; fusions &ge;20 reads and &gt;0.1% of total mapped reads.</p>
+  <p><b>OncoDEEP</b> is a capture-based exonic assay: all 638 genes are covered for SNV/INDEL, CNV and LOH. Fusions are only detected when the rearrangement falls within captured exonic regions. It also reports HRD, TMB and MSI.</p>
+  <p>Targeted panels do not provide genome-wide methylation class or chromosomal copy number profile.</p>
+</div>
+
+<footer>
+  <span>v1.0 &middot; Aug 2026 &middot; GC</span>
+  <span>Panel content per manufacturer specifications (Thermo Fisher Scientific)</span>
+</footer>
+
+</div>
+
+<script>
+const P = {
+  opa: {
+    name:"Oncomine Precision Assay GX", code:"OPA / 50 genes",
+    hotspot:"AKT1 AKT2 AKT3 ALK AR ARAF BRAF CDK4 CDKN2A CHEK2 CTNNB1 EGFR ERBB2 ERBB3 ERBB4 ESR1 FGFR1 FGFR2 FGFR3 FGFR4 FLT3 GNA11 GNAQ GNAS HRAS IDH1 IDH2 KIT KRAS MAP2K1 MAP2K2 MET MTOR NRAS NTRK1 NTRK2 NTRK3 PDGFRA PIK3CA PTEN RAF1 RET ROS1 SMO TP53",
+    exon:"",
+    cnv:"ALK AR CD274 CDKN2A EGFR ERBB2 ERBB3 FGFR1 FGFR2 FGFR3 KRAS MET PIK3CA PTEN",
+    fusion:"ALK BRAF ESR1 FGFR1 FGFR2 FGFR3 MET NRG1 NTRK1 NTRK2 NTRK3 NUTM1 RET ROS1 RSPO2 RSPO3 AR EGFR"
+  },
+  oca: {
+    name:"Oncomine Comprehensive Assay v3 GX", code:"OCA / 161 genes",
+    hotspot:"AKT1 AKT2 AKT3 ALK AR ARAF AXL BRAF BTK CBL CCND1 CDK4 CDK6 CHEK2 CSF1R CTNNB1 DDR2 EGFR ERBB2 ERBB3 ERBB4 ERCC2 ESR1 EZH2 FGFR1 FGFR2 FGFR3 FGFR4 FLT3 FOXL2 GATA2 GNA11 GNAQ GNAS H3F3A HIST1H3B HNF1A HRAS IDH1 IDH2 JAK1 JAK2 JAK3 KDR KIT KNSTRN KRAS MAGOH MAP2K1 MAP2K2 MAP2K4 MAPK1 MAX MDM4 MED12 MET MTOR MYC MYCN MYD88 NFE2L2 NRAS NTRK1 NTRK2 NTRK3 PDGFRA PDGFRB PIK3CA PIK3CB PPP2R1A PTPN11 RAC1 RAF1 RET RHEB RHOA ROS1 SF3B1 SMAD4 SMO SPOP SRC STAT3 TERT TOP1 U2AF1 XPO1",
+    exon:"ARID1A ATM ATR ATRX BAP1 BRCA1 BRCA2 CDK12 CDKN1B CDKN2A CDKN2B CHEK1 CREBBP FANCA FANCD2 FANCI FBXW7 MLH1 MRE11 MSH2 MSH6 NBN NF1 NF2 NOTCH1 NOTCH2 NOTCH3 PALB2 PIK3R1 PMS2 POLE PTCH1 PTEN RAD50 RAD51 RAD51B RAD51C RAD51D RB1 RNF43 SETD2 SLX4 SMARCA4 SMARCB1 STK11 TP53 TSC1 TSC2",
+    cnv:"AKT1 AKT2 AKT3 ALK AR AXL BRAF CCND1 CCND2 CCND3 CCNE1 CDK2 CDK4 CDK6 EGFR ERBB2 ESR1 FGF19 FGF3 FGFR1 FGFR2 FGFR3 FGFR4 FLT3 IGF1R KIT KRAS MDM2 MDM4 MET MYC MYCL MYCN NTRK1 NTRK2 NTRK3 PDGFRA PDGFRB PIK3CA PIK3CB PPARG RICTOR TERT",
+    fusion:"AKT2 ALK AR AXL BRAF BRCA1 BRCA2 CDKN2A EGFR ERBB2 ERBB4 ERG ESR1 ETV1 ETV4 ETV5 FGFR1 FGFR2 FGFR3 FGR FLT3 JAK2 KRAS MDM4 MET MYB MYBL1 NF1 NOTCH1 NOTCH4 NRG1 NTRK1 NTRK2 NTRK3 NUTM1 PDGFRA PDGFRB PIK3CA PPARG PRKACA PRKACB PTEN RAD51B RAF1 RB1 RELA RET ROS1 RSPO2 RSPO3 TERT"
+  },
+  cch: {
+    name:"Oncomine Childhood Cancer Research Assay", code:"Childhood / 200 genes",
+    hotspot:"ABL1 ABL2 ALK ACVR1 AKT1 ASXL1 ASXL2 BRAF CALR CBL CCND1 CCND3 CCR5 CDK4 CIC CREBBP CRLF2 CSF1R CSF3R CTNNB1 DAXX DNMT3A EGFR EP300 ERBB2 ERBB3 ERBB4 ESR1 EZH2 FASLG FBXW7 FGFR1 FGFR2 FGFR3 FLT3 GATA2 GNA11 GNAQ H3F3A HDAC9 HIST1H3B HRAS IDH1 IDH2 IL7R JAK1 JAK2 JAK3 KDM4C KDR KIT KRAS MAP2K1 MAP2K2 MET MPL MSH6 MTOR MYC MYCN NCOR2 NOTCH1 NPM1 NRAS NT5C2 PAX5 PDGFRA PDGFRB PIK3CA PIK3R1 PPM1D PTPN11 RAF1 RET RHOA SETBP1 SETD2 SH2B3 SH2D1A SMO STAT3 STAT5B TERT TPMT USP7 ZMYM3",
+    exon:"APC ARID1A ARID1B ATRX CDKN2A CDKN2B CEBPA CHD7 CRLF1 DDX3X DICER1 EBF1 EED FAS GATA1 GATA3 GNA13 ID3 IKZF1 KDM6A KMT2D MYOD1 NF1 NF2 PHF6 PRPS1 PSMB5 PTCH1 PTEN RB1 RUNX1 SMARCA4 SMARCB1 SOCS2 SUFU SUZ12 TCF3 TET2 TP53 TSC1 TSC2 WHSC1 WT1 XIAP",
+    cnv:"ABL2 ALK BRAF CCND1 CDK4 CDK6 EGFR ERBB2 ERBB3 FGFR1 FGFR2 FGFR3 FGFR4 GLI1 GLI2 IGF1R JAK1 JAK2 JAK3 KIT KRAS MDM2 MDM4 MET MYC MYCN PDGFRA PIK3CA",
+    fusion:"ABL1 ABL2 AFF3 ALK BCL11B BCOR BCR BRAF CAMTA1 CCND1 CIC CREBBP CRLF2 CSF1R DUSP22 EGFR ETV6 EWSR1 FGFR1 FGFR2 FGFR3 FLT3 FOSB FUS GLI1 GLIS2 HMGA2 JAK2 KAT6A KMT2A KMT2B KMT2C KMT2D LMO2 MAML2 MAN2B1 MECOM MEF2D MET MKL1 MLLT10 MN1 MYB MYBL1 MYH11 MYH9 NCOA2 NCOR1 NOTCH1 NOTCH2 NOTCH4 NPM1 NR4A3 NTRK1 NTRK2 NTRK3 NUP214 NUP98 NUTM1 NUTM2B PAX3 PAX5 PAX7 PDGFB PDGFRA PDGFRB PLAG1 RAF1 RANBP17 RARA RECK RELA RET ROS1 RUNX1 SS18 SSBP2 STAG2 STAT6 TAL1 TCF3 TFE3 TP63 TSLP TSPAN4 UBTF USP6 WHSC1 YAP1 ZMYND11 ZNF384"
+  },
+  odp: {
+    name:"OncoDEEP (OncoDNA)", code:"OncoDEEP / 638 genes",
+    hotspot:"", fusion:"",
+    exon:"ABL1, ABL2, ACVR1, ACVR1B, AGO1, AGO2, AJUBA, AKT1, AKT2, AKT3, ALB, ALK, ALOX12B, AMER1, ANKRD11, ANKRD26, APC, APLNR, AR, ARAF, ARFRP1, ARHGAP35, ARID1A, ARID1B, ARID2, ARID5B, ASXL1, ASXL2, ATM, ATR, ATRX, ATXN7, AURKA, AURKB, AXIN1, AXIN2, AXL, B2M, BABAM1, BAP1, BARD1, BAT25, BAT-26, BBC3, BCL10, BCL2, BCL2L1, BCL2L11, BCL2L2, BCL6, BCOR, BCORL1, BCR, BIRC3, BLM, BMPR1A, BRAF, BRCA1, BRCA2, BRD4, BRIP1, BTG1, BTG2, BTK, C11ORF30, CALR, CARD11, CARM1, CASP8, CBFB, CBL, CCNB3, CCND1, CCND2, CCND3, CCNE1, CD276, CD70, CD74, CD79A, CD79B, CDC42, CDC73, CDH1, CDK12, CDK4, CDK6, CDK7, CDK8, CDKN1A, CDKN1B, CDKN2A, CDKN2B, CDKN2C, CEBPA, CENPA, CHD2, CHD4, CHEK1, CHEK2, CIC, CMTR2, CREBBP, CRKL, CRLF2, CSDE1, CSF1R, CSF3R, CSNK1A1, CTCF, CTLA4, CTNNA1, CTNNB1, CTR9, CUL3, CUL4A, CUX1, CXCR4, CYLD, CYP17A1, CYP19A1, CYP2C19, CYP2D6, CYSLTR2, D2S123, DAXX, DCUN1D1, DDR1, DDR2, DDX41, DHX15, DICER1, DIS3, DNAJB1, DNMT1, DNMT3A, DNMT3B, DOT1L, DPYD, DROSHA, DUSP4, E2F3, EED, EGFL7, EGFR, EIF1AX, EIF4A2, EIF4E, ELF3, EML4, EMSY, EP300, EPAS1, EPCAM, EPHA3, EPHA5, EPHA7, EPHB1, EPHB4, ERBB2, ERBB3, ERBB4, ERCC1, ERCC2, ERCC3, ERCC4, ERCC5, ERF, ERG, ERRFI1, ESR1, ETAA1, ETS1, ETV1, ETV4, ETV5, ETV6, EWSR1, EZH1, EZH2, EZR, FAM175A, FAM46C, FAM58A, FANCA, FANCC, FANCD2, FANCE, FANCF, FANCG, FANCI, FANCL, FAS, FAT1, FBXW7, FGF1, FGF10, FGF12, FGF14, FGF19, FGF2, FGF23, FGF3, FGF4, FGF5, FGF6, FGF7, FGF8, FGF9, FGFR1, FGFR2, FGFR3, FGFR4, FH, FLCN, FLI1, FLT1, FLT3, FLT4, FOXA1, FOXF1, FOXL2, FOXO1, FOXP1, FRS2, FUBP1, FYN, GAB1, GAB2, GABRA6, GATA1, GATA2, GATA3, GATA4, GATA6, GEN1, GID4, GLI1, GNA11, GNA13, GNAQ, GNAS, GNB1, GPR124, GPS2, GREM1, GRIN2A, GRM3, GSK3B, H3F3A, H3F3B, H3F3C, HDAC1, HGF, HIST1H1C, HIST1H2BD, HIST1H3A, HIST1H3B, HIST1H3C, HIST1H3D, HIST1H3E, HIST1H3F, HIST1H3G, HIST1H3H, HIST1H3I, HIST1H3J, HIST2H3A, HIST2H3C, HIST2H3D, HIST3H3, HLA-A, HLA-B, HLA-C, HNF1A, HNRNPK, HOXB13, HRAS, HSD3B1, HSP90AA1, ICOSLG, ID3, IDH1, IDH2, IFNGR1, IGF1, IGF1R, IGF2, IKBKE, IKZF1, IL10, IL7R, INHA, INHBA, INPP4A, INPP4B, INPPL1, INSR, IRF2, IRF4, IRS1, IRS2, JAK1, JAK2, JAK3, JUN, KAT6A, KBTBD4, KDM5A, KDM5C, KDM6A, KDR, KEAP1, KEL, KIF5B, KIT, KLF4, KLF5, KLHL6, KMT2A, KMT2B, KMT2C, KMT2D, KMT5A, KNSTRN, KRAS, LAMP1, LATS1, LATS2, LMO1, LRP1B, LTK, LYN, LZTR1, MAD2L2, MAGI2, MALT1, MAP2K1, MAP2K2, MAP2K4, MAP3K1, MAP3K13, MAP3K14, MAP3K4, MAPK1, MAPK3, MAPKAP1, MAX, MCL1, MDC1, MDM2, MDM4, MED12, MEF2B, MEN1, MET, MGA, MITF, MLH1, MLLT1, MLLT3, MPL, MRE11A, MSH2, MSH3, MSH6, MSI1, MSI2, MST1, MST1R, MTAP, MTOR, MUTYH, MYB, MYC, MYCL, MYCN, MYD88, MYOD1, NAB2, NADK, NBN, NCOA3, NCOR1, NEGR1, NF1, NF2, NFE2L2, NFKBIA, NKX2-1, NKX3-1, NOTCH1, NOTCH2, NOTCH3, NOTCH4, NPM1, NR-21, NR-27, NRAS, NRG1, NSD1, NT5C2, NTHL1, NTRK1, NTRK2, NTRK3, NUF2, NUP93, NUTM1, P2RY8, PAK1, PAK3, PAK7, PALB2, PARK2, PARP1, PARP2, PARP3, PAX3, PAX5, PAX7, PAX8, PBRM1, PD-1, PDGFRA, PDGFRB, PDK1, PD-L1, PD-L2, PDPK1, PGBD5, PGR, PHF6, PHOX2B, PIGA, PIK3C2B, PIK3C2G, PIK3C3, PIK3CA, PIK3CB, PIK3CD, PIK3CG, PIK3R1, PIK3R2, PIK3R3, PIM1, PLCG2, PLK2, PMAIP1, PMS1, PMS2, PNRC1, POLD1, POLE, POT1, PPARG, PPM1D, PPP2R1A, PPP2R2A, PPP4R2, PPP6C, PRDM1, PRDM14, PREX2, PRKAR1A, PRKCI, PRKD1, PRKDC, PRSS8, PTCH1, PTEN, PTP4A1, PTPN11, PTPRD, PTPRS, PTPRT, QKI, RAB35, RAC1, RAC2, RAD21, RAD50, RAD51, RAD51B, RAD51C, RAD51D, RAD52, RAD54L, RAF1, RANBP2, RARA, RASA1, RB1, RBM10, RECQL, RECQL4, REL, REST, RET, RFWD2, RHEB, RHOA, RICTOR, RIT1, RNF43, ROS1, RPS6KA4, RPS6KB1, RPS6KB2, RPTOR, RRAGC, RRAS, RRAS2, RSPO2, RTEL1, RUNX1, RUNX1T1, RXRA, RYBP, SCG5, SDC4, SDHA, SDHAF2, SDHB, SDHC, SDHD, SERPINB3, SERPINB4, SESN1, SESN2, SESN3, SETBP1, SETD2, SETDB1, SF3B1, SGK1, SH2B3, SH2D1A, SHOC2, SHQ1, SLC34A2, SLFN11, SLIT2, SLX4, SMAD2, SMAD3, SMAD4, SMARCA2, SMARCA4, SMARCB1, SMARCD1, SMARCE1, SMC1A, SMC3, SMO, SMYD3, SNCAIP, SOCS1, SOS1, SOX10, SOX17, SOX2, SOX9, SPEN, SPOP, SPRED1, SPRTN, SPTA1, SRC, SRSF2, STAG1, STAG2, STAT3, STAT4, STAT5A, STAT5B, STK11, STK19, STK40, SUFU, SUZ12, SYK, TAF1, TAP1, TAP2, TBX3, TCEB1, TCF3, TCF7L2, TEK, TERT, TET1, TET2, TFE3, TFRC, TGFBR1, TGFBR2, TIPARP, TMEM127, TMPRSS2, TNFAIP3, TNFRSF14, TOP1, TOP2A, TP53, TP53BP1, TP63, TPMT, TRAF2, TRAF7, TRIP13, TSC1, TSC2, TSHR, TYRO3, U2AF1, UGT1A1, UPF1, USP8, VEGFA, VHL, VTCN1, WHSC1, WHSC1L1, WISP3, WT1, WWTR1, XIAP, XPO1, XRCC2, YAP1, YES1, ZBTB2, ZBTB7A, ZFHX3, ZNF217, ZNF703, ZNRF3, ZRSR2",
+    cnv:"", loh:""
+  }
+};
+
+const KEYS=["opa","oca","cch","odp"];
+const FIELDS=["hotspot","exon","cnv","fusion","loh"];
+const LABEL={hotspot:["Hotspot","hot"],exon:["Full coding","exon"],cnv:["CNV","cnv"],fusion:["Fusion","fus"],loh:["LOH","loh"]};
+
+for(const k of KEYS){for(const f of FIELDS){
+  P[k][f]=new Set((P[k][f]||"").split(/[\s,]+/).filter(Boolean));
+}}
+P.odp.cnv=P.odp.exon;
+P.odp.loh=P.odp.exon;
+
+const ALL=new Set();
+for(const k of KEYS)for(const f of FIELDS)for(const g of P[k][f])ALL.add(g);
+const SORTED=[...ALL].sort();
+
+const q=document.getElementById("q"), out=document.getElementById("out");
+
+function render(gene){
+  const hits=KEYS.filter(k=>FIELDS.some(f=>P[k][f].has(gene)));
+  let html='<p class="gene-title">'+gene+'</p>';
+  html+='<p class="verdict">'+(hits.length?"Covered by "+hits.length+" of 4 panels.":"Not included in any of the four panels.")+'</p>';
+  for(const k of KEYS){
+    const found=FIELDS.filter(f=>P[k][f].has(gene));
+    html+='<div class="panel '+(found.length?"hit-"+k:"miss")+'">'
+      +'<p class="pname"><span>'+P[k].name+'</span><span class="pcode">'+P[k].code+'</span></p>'
+      +(found.length
+        ? '<div class="tags">'+found.map(f=>'<span class="tag '+LABEL[f][1]+'">'+LABEL[f][0]+'</span>').join("")+'</div>'
+        : '<span class="none">not included</span>')
+      +'</div>';
+  }
+  out.innerHTML=html;
+}
+
+function suggest(term){
+  const m=SORTED.filter(g=>g.indexOf(term)===0).slice(0,16);
+  if(!m.length){out.innerHTML='<p class="empty">No gene matches "'+term+'" in OPA, OCA, Childhood or OncoDEEP.</p>';return;}
+  out.innerHTML='<ul class="suggest">'+m.map(g=>'<li><button data-g="'+g+'">'+g+'</button></li>').join("")+'</ul>';
+  out.querySelectorAll("button").forEach(b=>b.onclick=function(){q.value=b.dataset.g;render(b.dataset.g);});
+}
+
+q.addEventListener("input",function(){
+  const t=q.value.trim().toUpperCase();
+  if(!t){out.innerHTML="";return;}
+  if(ALL.has(t))render(t); else suggest(t);
+});
+q.addEventListener("keydown",function(e){
+  if(e.key!=="Enter")return;
+  const t=q.value.trim().toUpperCase();
+  const first=out.querySelector("button");
+  if(ALL.has(t))render(t); else if(first){q.value=first.dataset.g;render(first.dataset.g);}
+});
+</script>
+</body>
+</html>
