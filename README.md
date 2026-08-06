@@ -29,3 +29,4 @@ The tool is a single self-contained HTML file with no external dependencies. It 
 ## Disclaimer
 
 This is an internal reference aid. It does not replace the manufacturer's specification sheet or the report issued by the molecular pathology laboratory.
+
