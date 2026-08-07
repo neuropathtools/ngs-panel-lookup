@@ -1,4 +1,4 @@
-[README (1).md](https://github.com/user-attachments/files/30830048/README.1.md)
+[README.md](https://github.com/user-attachments/files/30830048/README.1.md)
 # NGS Panel Lookup
 
 A single-page reference tool for checking which targeted NGS panel covers a given gene, and with what type of analysis.
