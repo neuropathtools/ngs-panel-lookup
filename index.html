@@ -243,7 +243,7 @@ const HEME = {
   lym: {
     name:"Ion AmpliSeq Lymphoid Panel v2", code:"Lymphoid / 60 genes",
     hotspot:"", exon:"", cnv:"", fusion:"", loh:"",
-    detail:{
+    detail:{targeted:{
       "ARID1A":"exons 1-20","ATM":"exons 2-63","B2M":"exons 1-3","BCL2":"exons 2 and 3",
       "BCL6":"exons 1-10","BIRC3":"exons 2-9","BRAF":"exons 11 and 15","BTK":"exon 15",
       "CARD11":"exons 3-25","CCND1":"exons 1-5","CCND3":"exon 5","CD79B":"exons 5 and 6",
@@ -261,6 +261,21 @@ const HEME = {
       "SMARCA4":"exons 4, 5, 8, 19, 25, 26, 31, 33 and 35","SOCS1":"exon 1",
       "STAT3":"exons 19-22","STAT5B":"exons 14-18","STAT6":"exons 9-14","TET2":"exons 3-6",
       "TNFAIP3":"exons 2-9","TNFRSF14":"exons 1-6","TP53":"exons 2-10","XPO1":"exon 15"
+    }}
+  },
+  cll: {
+    name:"Chronic Lymphocytic Leukaemia Solution", code:"CLL / Sophia Genetics",
+    hotspot:"", cnv:"", fusion:"", loh:"",
+    exon:"ATM, BIRC3, EGR2, FBXW7, MYD88, NFKBIE, POT1, TP53",
+    detail:{
+      targeted:{
+        "BCL2":"exons 2-3","BTK":"exon 15","NOTCH1":"exon 34 + UTR",
+        "PLCG2":"exons 19, 20 and 24","SF3B1":"exons 14-16, 18","XPO1":"exons 15-16"
+      },
+      cnv:{
+        "ARF1":"CEP12","CDK4":"CEP12","CUL4A":"13q34","DLEU1":"13q14",
+        "KLF5":"13q14","KRAS":"CEP12","PROZ":"13q34"
+      }
     }
   },
   cchH: JSON.parse(JSON.stringify({
@@ -281,7 +296,7 @@ const NOTES={
         '<p><b>OncoDEEP</b> is a capture-based exonic assay: all 638 genes are covered for SNV/INDEL, CNV and LOH. Fusions are detected only when the rearrangement falls within captured exonic regions. It also reports HRD, TMB and MSI.</p>'+
         '<p><b>HRR</b> and <b>Colon &amp; Lung v2</b> detect SNV/INDEL only &mdash; no CNV and no fusions.</p>'+
         '<p>Targeted panels do not provide genome-wide methylation class or chromosomal copy number profile.</p>',
-  heme:'<p><b>Lymphoid v2</b> covers selected exons rather than whole genes &mdash; hover or tap the <i>Targeted exons</i> tag to see which exons are covered for that gene. It detects SNV/INDEL only.</p>'+
+  heme:'<p><b>Lymphoid v2</b> and <b>CLL Solution</b> cover selected exons for some genes rather than whole genes &mdash; hover or tap a dashed tag to see exactly what is covered. Both detect SNV/INDEL only; the CLL panel additionally reports CNVs at defined loci.</p>'+
        '<p>Coverage of the exon containing a variant of interest should be confirmed with the molecular laboratory before excluding it.</p>'+
        '<p>Targeted panels do not provide genome-wide methylation class or chromosomal copy number profile.</p>'
 };
@@ -289,7 +304,11 @@ const NOTES={
 function prep(SET){
   const keys=Object.keys(SET);
   keys.forEach(function(k){
-    if(SET[k].detail) SET[k].targeted=Object.keys(SET[k].detail).join(" ");
+    if(SET[k].detail){
+      Object.keys(SET[k].detail).forEach(function(f){
+        SET[k][f]=((SET[k][f]||"")+" "+Object.keys(SET[k].detail[f]).join(" ")).trim();
+      });
+    }
     FIELDS.forEach(function(f){
       const raw=(typeof SET[k][f]==="string"?SET[k][f]:"").split(/[\s,]+/).filter(Boolean)
                  .map(function(g){return ALIAS[g]||g;});
@@ -331,9 +350,10 @@ function setMode(m){
 
 function tagHTML(panel,f,gene){
   const cls=LABEL[f][1], txt=LABEL[f][0];
-  if(f==="targeted" && panel.detail && panel.detail[gene]){
+  const d=panel.detail && panel.detail[f] && panel.detail[f][gene];
+  if(d){
     return '<span class="tip"><span class="tag '+cls+' has-tip">'+txt+'</span>'
-         + '<span class="tipbox">'+panel.detail[gene]+'</span></span>';
+         + '<span class="tipbox">'+d+'</span></span>';
   }
   return '<span class="tag '+cls+'">'+txt+'</span>';
 }
