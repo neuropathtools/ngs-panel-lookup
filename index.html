@@ -73,6 +73,45 @@
   input[type=text]:focus{outline:none;border-color:var(--a2);box-shadow:0 0 0 3px rgba(var(--focus),.16)}
   input::placeholder{color:#a9aac6;font-weight:400;letter-spacing:.05em}
 
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.8rem;font-weight:600;letter-spacing:.06em;
+    background:var(--card-bg);border:1px solid var(--line);
+    border-left:3px solid var(--a1);
+    border-radius:7px;padding:6px 8px 6px 11px;color:var(--text);
+  }
+  .chip button{
+    border:0;background:transparent;cursor:pointer;padding:0 2px;
+    color:var(--dim);font-size:1rem;line-height:1;font-family:inherit;
+  }
+  .chip button:hover{color:var(--a1)}
+  .chips .clear{
+    font-family:inherit;font-size:.72rem;letter-spacing:.02em;
+    background:transparent;border:0;color:var(--dim);cursor:pointer;
+    text-decoration:underline;text-underline-offset:3px;align-self:center;
+  }
+  .grows{margin-top:9px}
+  .grow{
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+    padding:5px 0;border-top:1px solid #f0f0f7;
+  }
+  .grow:first-child{border-top:0}
+  body.heme .grow{border-top-color:#fbeef1}
+  .gname{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.78rem;font-weight:700;letter-spacing:.06em;
+    min-width:88px;
+  }
+  .gname.off{color:#b9bacd;font-weight:500}
+  body.heme .gname.off{color:#d3b3bb}
+  .grow .tags{margin-top:0}
+  .nocov{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.67rem;letter-spacing:.05em;color:#b9bacd;
+  }
+  body.heme .nocov{color:#d3b3bb}
   .hint{font-size:.82rem;color:var(--dim);margin:11px 0 24px}
 
   .suggest{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:7px}
@@ -87,6 +126,20 @@
   .alias{opacity:.55;font-weight:400}
   .suggest button:hover .alias{opacity:.85}
 
+  .sortbar{
+    display:flex;justify-content:flex-end;align-items:center;gap:9px;
+    margin:0 0 13px;
+  }
+  .sortbar label{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:#9a9cb4;
+  }
+  .sortbar select{
+    font-family:inherit;font-size:.78rem;color:var(--text);
+    background:var(--card-bg);border:1px solid var(--line);border-radius:7px;
+    padding:5px 9px;cursor:pointer;
+  }
+  .sortbar select:focus{outline:none;border-color:var(--a2);box-shadow:0 0 0 3px rgba(var(--focus),.14)}
   .gene-title{
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
     font-size:1.75rem;font-weight:700;letter-spacing:.1em;
@@ -95,6 +148,7 @@
   .verdict{font-size:.88rem;color:var(--dim);margin:0 0 20px}
 
   .panel{
+    position:relative;
     background:var(--card-bg);
     border:1px solid var(--line);
     border-left:4px solid var(--line);
@@ -103,6 +157,17 @@
     margin-bottom:11px;
     box-shadow:0 1px 2px rgba(32,34,63,.04);
   }
+  .panel .bar{
+    position:absolute;left:-4px;top:-1px;bottom:-1px;width:4px;
+    border-radius:10px 0 0 10px;
+  }
+  .frac{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.63rem;letter-spacing:.09em;text-transform:uppercase;
+    color:#9a9cb4;border:1px solid var(--line);border-radius:4px;
+    padding:2px 6px;margin-left:9px;white-space:nowrap;font-weight:500;
+  }
+  body.heme .frac{color:#b0929a}
   .pname{
     font-size:.94rem;font-weight:600;margin:0;
     display:flex;justify-content:space-between;align-items:baseline;gap:14px;
@@ -141,11 +206,26 @@
   body.heme .tag.exon{color:#8c3f52;border-color:#eec7d0;background:#fcf0f3}
 
   .absent{
-    margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);
-    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-    font-size:.7rem;letter-spacing:.05em;color:var(--dim);line-height:1.7;
+    background:var(--card-bg);
+    border:1px solid var(--line);
+    border-left:4px solid #c3c4d6;
+    border-radius:10px;
+    padding:14px 17px;
+    margin-top:14px;
+    box-shadow:0 1px 2px rgba(32,34,63,.04);
   }
-  .absent b{color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.09em}
+  body.heme .absent{border-left-color:#dcc2c9}
+  .absent b{
+    display:block;margin-bottom:8px;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.66rem;color:var(--dim);font-weight:600;
+    text-transform:uppercase;letter-spacing:.11em;
+  }
+  .absent ul{list-style:none;margin:0;padding:0}
+  .absent li{
+    font-size:.9rem;color:#8a8ca8;line-height:1.75;font-weight:500;
+  }
+  body.heme .absent li{color:#a3808b}
 
   .note{
     margin-top:30px;padding-top:16px;border-top:1px solid var(--line);
@@ -185,14 +265,15 @@
 <div class="rule"></div>
 
 <input type="text" id="q" placeholder="Enter a gene..." autocomplete="off" spellcheck="false" autofocus>
-<p class="hint">Search by symbol (TP53, CDKN2A, IDH1) to see which panel covers it and how.</p>
+<div class="chips" id="chips"></div>
+<p class="hint">Search by symbol (TP53, CDKN2A, IDH1). Press Enter to add a gene and compare several at once.</p>
 
 <div id="out"></div>
 
 <div class="note" id="notes"></div>
 
 <footer>
-  <span>v1.1 &middot; Aug 2026 &middot; GC</span>
+  <span>v1.2 &middot; Aug 2026 &middot; GC</span>
   <span>Panel content per manufacturer specifications</span>
 </footer>
 
@@ -317,7 +398,11 @@ function prep(SET){
   });
   if(SET.odp){SET.odp.cnv=SET.odp.exon;SET.odp.loh=SET.odp.exon;}
   const all=new Set();
-  keys.forEach(function(k){FIELDS.forEach(function(f){SET[k][f].forEach(function(g){all.add(g);});});});
+  keys.forEach(function(k){
+    const u=new Set();
+    FIELDS.forEach(function(f){SET[k][f].forEach(function(g){u.add(g);all.add(g);});});
+    SET[k].size=u.size;
+  });
   const sug=[...all].map(function(g){return {label:g, gene:g};});
   Object.keys(ALIAS).forEach(function(a){
     if(all.has(ALIAS[a])) sug.push({label:a, gene:ALIAS[a], alias:true});
@@ -330,8 +415,11 @@ const IDX={solid:prep(SOLID), heme:prep(HEME)};
 const DATA={solid:SOLID, heme:HEME};
 
 let mode="solid";
+let picked=[];
+let sortBy="recommended";
 const q=document.getElementById("q"), out=document.getElementById("out"),
-      sub=document.getElementById("sub"), notes=document.getElementById("notes");
+      sub=document.getElementById("sub"), notes=document.getElementById("notes"),
+      chips=document.getElementById("chips");
 
 function setMode(m){
   mode=m;
@@ -343,9 +431,39 @@ function setMode(m){
     ? keys.map(function(k){return DATA[m][k].code.split(" /")[0];}).join(" \u00b7 ")
     : "No panels loaded";
   notes.innerHTML=NOTES[m];
-  out.innerHTML="";
-  q.value="";
+  refresh();
   q.focus();
+}
+
+function drawChips(){
+  if(!picked.length){chips.innerHTML="";return;}
+  chips.innerHTML = picked.map(function(g,i){
+    return '<span class="chip">'+g+'<button data-i="'+i+'" title="Remove">&times;</button></span>';
+  }).join("") + (picked.length>1?'<button class="clear">Clear all</button>':'');
+  chips.querySelectorAll(".chip button").forEach(function(b){
+    b.onclick=function(){picked.splice(+b.dataset.i,1);drawChips();refresh();};
+  });
+  const c=chips.querySelector(".clear");
+  if(c)c.onclick=function(){picked=[];drawChips();refresh();};
+}
+
+function addGene(g){
+  if(picked.indexOf(g)<0)picked.push(g);
+  q.value="";
+  drawChips();
+  refresh();
+  q.focus();
+}
+
+function refresh(){
+  const term=q.value.trim().toUpperCase();
+  if(term){
+    const g=ALIAS[term]||term;
+    if(IDX[mode].all.has(g))renderMany(picked.concat(picked.indexOf(g)<0?[g]:[]));
+    else suggest(term);
+    return;
+  }
+  if(picked.length)renderMany(picked); else out.innerHTML="";
 }
 
 function tagHTML(panel,f,gene){
@@ -358,32 +476,79 @@ function tagHTML(panel,f,gene){
   return '<span class="tag '+cls+'">'+txt+'</span>';
 }
 
-function render(gene){
-  const SET=DATA[mode], keys=IDX[mode].keys;
+function renderMany(genes){
+  if(!genes.length){out.innerHTML="";return;}
+  const SET=DATA[mode], keys=IDX[mode].keys, multi=genes.length>1;
   const present=[], absent=[];
   keys.forEach(function(k){
-    const found=FIELDS.filter(function(f){return SET[k][f].has(gene);});
-    (found.length?present:absent).push({k:k, found:found});
+    const rows=genes.map(function(g){
+      return {g:g, found:FIELDS.filter(function(f){return SET[k][f].has(g);})};
+    });
+    (rows.some(function(r){return r.found.length;})?present:absent).push({k:k, rows:rows});
   });
 
-  let html='<p class="gene-title">'+gene+'</p>';
+  present.forEach(function(p){
+    p.n=p.rows.filter(function(r){return r.found.length;}).length;
+  });
+  if(sortBy==="alpha"){
+    present.sort(function(a,b){return SET[a.k].name<SET[b.k].name?-1:1;});
+    absent.sort(function(a,b){return SET[a.k].name<SET[b.k].name?-1:1;});
+  }else{
+    present.sort(function(a,b){
+      if(b.n!==a.n)return b.n-a.n;
+      return SET[a.k].size-SET[b.k].size;
+    });
+    absent.sort(function(a,b){return SET[a.k].size-SET[b.k].size;});
+  }
+
+  let html='<p class="gene-title">'+genes.join('<span style="opacity:.35"> / </span>')+'</p>';
   html+='<p class="verdict">'+(present.length
-      ? "Covered by "+present.length+" of "+keys.length+" panels."
+      ? (multi?"Covered by ":"Covered by ")+present.length+" of "+keys.length+" panels."
+        +(multi?" Not every panel covers every gene.":"")
       : "Not included in any of the "+keys.length+" panels.")+'</p>';
+
+  if(present.length>1){
+    html+='<div class="sortbar"><label for="sortsel">Sort by</label>'
+      +'<select id="sortsel">'
+      +'<option value="recommended"'+(sortBy==="recommended"?" selected":"")+'>Recommended</option>'
+      +'<option value="alpha"'+(sortBy==="alpha"?" selected":"")+'>Panel name</option>'
+      +'</select></div>';
+  }
 
   present.forEach(function(p){
     const col="var(--"+ACCENT[keys.indexOf(p.k)%ACCENT.length]+")";
-    html+='<div class="panel" style="border-left-color:'+col+'">'
-      +'<p class="pname"><span>'+SET[p.k].name+'</span><span class="pcode">'+SET[p.k].code+'</span></p>'
-      +'<div class="tags">'+p.found.map(function(f){return tagHTML(SET[p.k],f,gene);}).join("")+'</div>'
-      +'</div>';
+    const nCov=p.rows.filter(function(r){return r.found.length;}).length;
+    const partial=multi && nCov<genes.length;
+    const pct=Math.round(nCov/genes.length*100);
+    const bar=partial
+      ? '<i class="bar" style="background:linear-gradient(to bottom,'+col+' 0 '+pct+'%,#d2d3e0 '+pct+'% 100%)"></i>'
+      : '<i class="bar" style="background:'+col+'"></i>';
+    html+='<div class="panel" style="border-left-color:transparent">'+bar
+      +'<p class="pname"><span>'+SET[p.k].name
+      +(partial?'<span class="frac">'+nCov+' of '+genes.length+'</span>':'')
+      +'</span><span class="pcode">'+SET[p.k].code+'</span></p>';
+    if(multi){
+      html+='<div class="grows">'+p.rows.map(function(r){
+        return '<div class="grow"><span class="gname'+(r.found.length?'':' off')+'">'+r.g+'</span>'
+          +(r.found.length
+            ? '<span class="tags">'+r.found.map(function(f){return tagHTML(SET[p.k],f,r.g);}).join("")+'</span>'
+            : '<span class="nocov">not covered</span>')
+          +'</div>';
+      }).join("")+'</div>';
+    }else{
+      html+='<div class="tags">'+p.rows[0].found.map(function(f){return tagHTML(SET[p.k],f,genes[0]);}).join("")+'</div>';
+    }
+    html+='</div>';
   });
 
   if(absent.length){
-    html+='<p class="absent"><b>Not included in</b><br>'
-      + absent.map(function(a){return SET[a.k].name;}).join(" &middot; ") + '</p>';
+    html+='<div class="absent"><b>'+(multi?"Covers none of these genes":"Not included in")+'</b><ul>'
+      + absent.map(function(a){return '<li>'+SET[a.k].name+'</li>';}).join("") + '</ul></div>';
   }
   out.innerHTML=html;
+
+  const sel=out.querySelector("#sortsel");
+  if(sel)sel.onchange=function(){sortBy=sel.value;renderMany(genes);};
 
   out.querySelectorAll(".tag.has-tip").forEach(function(t){
     t.onclick=function(e){
@@ -407,21 +572,21 @@ function suggest(term){
       ? s.label+' <span class="alias">\u2192 '+s.gene+'</span>'
       : s.label)+'</button></li>';
   }).join("")+'</ul>';
-  out.querySelectorAll("button").forEach(function(b){b.onclick=function(){q.value=b.dataset.g;render(b.dataset.g);};});
+  out.querySelectorAll("button").forEach(function(b){b.onclick=function(){addGene(b.dataset.g);};});
 }
 
-q.addEventListener("input",function(){
-  const t=q.value.trim().toUpperCase();
-  if(!t){out.innerHTML="";return;}
-  const g=ALIAS[t]||t;
-  if(IDX[mode].all.has(g))render(g); else suggest(t);
-});
+q.addEventListener("input",refresh);
 q.addEventListener("keydown",function(e){
+  if(e.key==="Backspace" && !q.value && picked.length){
+    picked.pop();drawChips();refresh();return;
+  }
   if(e.key!=="Enter")return;
   const t=q.value.trim().toUpperCase();
+  if(!t)return;
   const g=ALIAS[t]||t;
-  const first=out.querySelector("button");
-  if(IDX[mode].all.has(g))render(g); else if(first){q.value=first.dataset.g;render(first.dataset.g);}
+  const first=out.querySelector(".suggest button");
+  if(IDX[mode].all.has(g))addGene(g);
+  else if(first)addGene(first.dataset.g);
 });
 
 document.getElementById("btn-solid").onclick=function(){setMode("solid");};
