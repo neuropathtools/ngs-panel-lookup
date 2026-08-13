@@ -273,7 +273,7 @@
 <div class="note" id="notes"></div>
 
 <footer>
-  <span>v1.2 &middot; Aug 2026 &middot; GC</span>
+  <span>v1.4 &middot; Aug 2026 &middot; GC</span>
   <span>Panel content per manufacturer specifications</span>
 </footer>
 
@@ -359,6 +359,12 @@ const HEME = {
       }
     }
   },
+  mye: {
+    name:"Oncomine Myeloid Assay GX v2", code:"Myeloid / 45 genes",
+    cnv:"", fusion:"", loh:"",
+    exon:"ASXL1, BCOR, CALR, CEBPA, ETV6, EZH2, IKZF1, NF1, PHF6, PRPF8, RB1, RUNX1, SH2B3, STAG2, TET2, TP53, ZRSR2",
+    hotspot:"ABL1, ANKRD26, BRAF, CBL, CSF3R, DDX41, DNMT3A, FLT3, GATA2, HRAS, IDH1, IDH2, JAK2, KIT, KRAS, MPL, MYD88, NPM1, NRAS, PPM1D, PTPN11, SETBP1, SF3B1, SMC1A, SMC3, SRSF2, U2AF1, WT1"
+  },
   cchH: JSON.parse(JSON.stringify({
     name:"Oncomine Childhood Cancer Research Assay", code:"Childhood / 200 genes",
     hotspot:SOLID.cch.hotspot, exon:SOLID.cch.exon, cnv:SOLID.cch.cnv,
@@ -378,6 +384,7 @@ const NOTES={
         '<p><b>HRR</b> and <b>Colon &amp; Lung v2</b> detect SNV/INDEL only &mdash; no CNV and no fusions.</p>'+
         '<p>Targeted panels do not provide genome-wide methylation class or chromosomal copy number profile.</p>',
   heme:'<p><b>Lymphoid v2</b> and <b>CLL Solution</b> cover selected exons for some genes rather than whole genes &mdash; hover or tap a dashed tag to see exactly what is covered. Both detect SNV/INDEL only; the CLL panel additionally reports CNVs at defined loci.</p>'+
+       '<p><b>Myeloid GX v2</b> covers 17 genes across the full coding region and 28 at hotspots only.</p>'+
        '<p>Coverage of the exon containing a variant of interest should be confirmed with the molecular laboratory before excluding it.</p>'+
        '<p>Targeted panels do not provide genome-wide methylation class or chromosomal copy number profile.</p>'
 };
