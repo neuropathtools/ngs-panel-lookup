@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/31029688/README.md)
+[README.md](https://github.com/user-attachments/files/31029849/README.md)
 # NGS Panel Lookup
 
 A single-page reference tool for checking which targeted NGS panel covers a given gene, and with what type of analysis.
@@ -16,22 +16,24 @@ Each face searches only its own panels. Whatever is in the search box is kept an
 
 ### Solid tumour
 
+Listed smallest first.
+
 | Panel | Manufacturer | Genes |
 |---|---|---|
+| Ion AmpliSeq Colon and Lung Research Panel v2 | Thermo Fisher Scientific | 22 |
+| Oncomine HRR Pathway Predesigned Panel | Thermo Fisher Scientific | 28 |
 | Oncomine Precision Assay GX (OPA) | Thermo Fisher Scientific | 50 |
 | Oncomine Comprehensive Assay v3 GX (OCA) | Thermo Fisher Scientific | 161 |
 | Oncomine Childhood Cancer Research Assay | Thermo Fisher Scientific | 200 |
 | OncoDEEP | OncoDNA | 638 |
-| Oncomine HRR Pathway Predesigned Panel | Thermo Fisher Scientific | 28 |
-| Ion AmpliSeq Colon and Lung Research Panel v2 | Thermo Fisher Scientific | 22 |
 
 ### Haematology
 
 | Panel | Manufacturer | Genes |
 |---|---|---|
-| Ion AmpliSeq Lymphoid Panel v2 | Thermo Fisher Scientific | 60 |
 | Chronic Lymphocytic Leukaemia Solution | Sophia Genetics | 21 |
 | Oncomine Myeloid Assay GX v2 | Thermo Fisher Scientific | 45 |
+| Ion AmpliSeq Lymphoid Panel v2 | Thermo Fisher Scientific | 60 |
 | Oncomine Childhood Cancer Research Assay | Thermo Fisher Scientific | 200 |
 
 ## Searching several genes at once
