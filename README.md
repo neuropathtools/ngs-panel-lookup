@@ -1,4 +1,4 @@
-[README (1).md](https://github.com/user-attachments/files/31026349/README.1.md)
+[README.md](https://github.com/user-attachments/files/31029688/README.md)
 # NGS Panel Lookup
 
 A single-page reference tool for checking which targeted NGS panel covers a given gene, and with what type of analysis.
@@ -8,7 +8,7 @@ Type a gene symbol and the tool shows, for each panel, whether the gene is inclu
 The tool has two faces, switched from the toggle in the header:
 
 - **Solid tumour** — six panels
-- **Haematology** — three panels
+- **Haematology** — four panels
 
 Each face searches only its own panels. Whatever is in the search box is kept and re-run when switching faces, so the same gene can be checked on both sides in one step.
 
@@ -31,6 +31,7 @@ Each face searches only its own panels. Whatever is in the search box is kept an
 |---|---|---|
 | Ion AmpliSeq Lymphoid Panel v2 | Thermo Fisher Scientific | 60 |
 | Chronic Lymphocytic Leukaemia Solution | Sophia Genetics | 21 |
+| Oncomine Myeloid Assay GX v2 | Thermo Fisher Scientific | 45 |
 | Oncomine Childhood Cancer Research Assay | Thermo Fisher Scientific | 200 |
 
 ## Searching several genes at once
@@ -65,7 +66,7 @@ Where a gene is listed under a legacy symbol in one panel and its current symbol
 
 - Gene content reflects manufacturer specifications as of the version date shown in the footer of the tool. Panel composition changes between assay versions — check against the current specification sheet before relying on it for a case.
 - OncoDEEP is a capture-based exonic assay: all genes are covered for SNV/INDEL, CNV and LOH. Fusions are detected only when the rearrangement falls within captured exonic regions. It additionally reports HRD, TMB and MSI.
-- HRR, Colon and Lung v2 and Lymphoid v2 detect SNV/INDEL only. The CLL panel adds CNVs at defined loci.
+- HRR, Colon and Lung v2 and Lymphoid v2 detect SNV/INDEL only. The CLL panel adds CNVs at defined loci. Myeloid GX v2 covers 17 genes across the full coding region and 28 at hotspots only.
 - Promoter and other non-coding regions are generally not covered by exon-based designs. Where a promoter variant is clinically relevant, confirm coverage with the molecular laboratory.
 - No targeted panel provides a genome-wide methylation class or chromosomal copy number profile.
 - Panel size is used as a proxy for cost in the recommended sort order. Actual pricing depends on the contract with each supplier and is not reflected here.
