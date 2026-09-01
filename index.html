@@ -92,6 +92,26 @@
     background:transparent;border:0;color:var(--dim);cursor:pointer;
     text-decoration:underline;text-underline-offset:3px;align-self:center;
   }
+  .chip .cg{
+    border:0;background:transparent;cursor:pointer;padding:0;color:inherit;
+    font-family:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;
+  }
+  .chip.hasreq{border-left-color:var(--a2)}
+  .creq{
+    font-size:.68rem;font-weight:500;letter-spacing:.03em;color:var(--a2);
+    padding-left:1px;
+  }
+  .reqbar{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    margin:11px 0 0;padding:11px 13px;
+    background:var(--card-bg);border:1px solid var(--line);border-radius:9px;
+  }
+  .reqbar>label{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:#9a9cb4;
+  }
+  .reqbar .done{margin-left:auto;font-size:.72rem;color:var(--dim);
+    background:transparent;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
   .grows{margin-top:9px}
   .grow{
     display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
@@ -126,9 +146,30 @@
   .alias{opacity:.55;font-weight:400}
   .suggest button:hover .alias{opacity:.85}
 
+  .controls{
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+    flex-wrap:wrap;margin:0 0 13px;
+  }
+  .filterbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .filterbar>label,.sortbar label{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:#9a9cb4;
+  }
+  .fchip{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.67rem;letter-spacing:.06em;
+    padding:4px 9px;border-radius:5px;border:1px solid var(--line);
+    background:var(--card-bg);color:#9a9cb4;cursor:pointer;transition:.13s;
+  }
+  .fchip:hover{border-color:#b9bacd}
+  .fchip.on.hot{color:#5a42ab;border-color:#c9bdf1;background:#f0ecfd}
+  .fchip.on.exon{color:#1f5f9e;border-color:#b8d4f0;background:#eaf3fc}
+  .fchip.on.tgt{color:#7a3f52;border-color:#e6c3cd;background:#fbeff2}
+  .fchip.on.cnv{color:#8b3a98;border-color:#e5bfea;background:#faeffb}
+  .fchip.on.fus{color:#1f7a70;border-color:#b3ddd7;background:#eaf7f5}
+  .fchip.on.loh{color:#96650f;border-color:#e8cf9e;background:#fdf5e6}
   .sortbar{
-    display:flex;justify-content:flex-end;align-items:center;gap:9px;
-    margin:0 0 13px;
+    display:flex;align-items:center;gap:9px;margin-left:auto;
   }
   .sortbar label{
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
@@ -168,6 +209,11 @@
     padding:2px 6px;margin-left:9px;white-space:nowrap;font-weight:500;
   }
   body.heme .frac{color:#b0929a}
+  .star{
+    font-size:.85em;font-weight:700;margin-left:2px;
+    color:#c2841f;line-height:0;
+  }
+  body.heme .star{color:#b0553a}
   .pname{
     font-size:.94rem;font-weight:600;margin:0;
     display:flex;justify-content:space-between;align-items:baseline;gap:14px;
@@ -266,14 +312,15 @@
 
 <input type="text" id="q" placeholder="Enter a gene..." autocomplete="off" spellcheck="false" autofocus>
 <div class="chips" id="chips"></div>
-<p class="hint">Search by symbol (TP53, CDKN2A, IDH1). Press Enter to add a gene and compare several at once.</p>
+<div id="reqbar"></div>
+<p class="hint">Search by symbol (TP53, CDKN2A, IDH1). Press Enter to add a gene and compare several at once. Click a gene to require a specific analysis type for it.</p>
 
 <div id="out"></div>
 
 <div class="note" id="notes"></div>
 
 <footer>
-  <span>v1.4 &middot; Aug 2026 &middot; GC</span>
+  <span>v1.9 &middot; Aug 2026 &middot; GC</span>
   <span>Panel content per manufacturer specifications</span>
 </footer>
 
@@ -282,8 +329,10 @@
 <script>
 const SOLID = {
   opa: {
-    name:"Oncomine Precision Assay GX", code:"OPA / 50 genes",
-    hotspot:"AKT1 AKT2 AKT3 ALK AR ARAF BRAF CDK4 CDKN2A CHEK2 CTNNB1 EGFR ERBB2 ERBB3 ERBB4 ESR1 FGFR1 FGFR2 FGFR3 FGFR4 FLT3 GNA11 GNAQ GNAS HRAS IDH1 IDH2 KIT KRAS MAP2K1 MAP2K2 MET MTOR NRAS NTRK1 NTRK2 NTRK3 PDGFRA PIK3CA PTEN RAF1 RET ROS1 SMO TP53",
+    name:"Oncomine Precision Assay GX", code:"OPA / 58 genes",
+    spikein:"RB1 TERT KEAP1 FOXL2 H3F3A SMARCA4 STK11 POLE",
+    expanded:"FGFR2 FGFR3 HRAS KRAS PIK3CA",
+    hotspot:"AKT1 AKT2 AKT3 ALK AR ARAF BRAF CDK4 CDKN2A CHEK2 CTNNB1 EGFR ERBB2 ERBB3 ERBB4 ESR1 FGFR1 FGFR2 FGFR3 FGFR4 FLT3 FOXL2 GNA11 GNAQ GNAS H3F3A HRAS IDH1 IDH2 KEAP1 KIT KRAS MAP2K1 MAP2K2 MET MTOR NRAS NTRK1 NTRK2 NTRK3 PDGFRA PIK3CA POLE PTEN RAF1 RB1 RET ROS1 SMARCA4 SMO STK11 TERT TP53",
     exon:"",
     cnv:"ALK AR CD274 CDKN2A EGFR ERBB2 ERBB3 FGFR1 FGFR2 FGFR3 KRAS MET PIK3CA PTEN",
     fusion:"ALK BRAF ESR1 FGFR1 FGFR2 FGFR3 MET NRG1 NTRK1 NTRK2 NTRK3 NUTM1 RET ROS1 RSPO2 RSPO3 AR EGFR"
@@ -377,12 +426,13 @@ const ACCENT=["a1","a2","a3","a4","a1","a2","a3","a4"];
 const FIELDS=["hotspot","exon","targeted","cnv","fusion","loh"];
 const LABEL={hotspot:["Hotspot","hot"],exon:["Full coding","exon"],targeted:["Targeted exons","tgt"],
              cnv:["CNV","cnv"],fusion:["Fusion","fus"],loh:["LOH","loh"]};
-const ALIAS={"FAM46C":"TENT5C","MLL2":"KMT2D","MLL":"KMT2A"};
+const ALIAS={"FAM46C":"TENT5C","MLL2":"KMT2D","MLL":"KMT2A","H3-3A":"H3F3A"};
 
 const NOTES={
   solid:'<p><b>Sensitivity:</b> point variants VAF &ge;5% &middot; CNV &ge;6 copies with tumour cellularity &gt;50% &middot; fusions &ge;20 reads and &gt;0.1% of total mapped reads.</p>'+
         '<p><b>OncoDEEP</b> is a capture-based exonic assay: all 638 genes are covered for SNV/INDEL, CNV and LOH. Fusions are detected only when the rearrangement falls within captured exonic regions. It also reports HRD, TMB and MSI.</p>'+
         '<p><b>HRR</b> and <b>Colon &amp; Lung v2</b> detect SNV/INDEL only &mdash; no CNV and no fusions.</p>'+
+        '<p>An asterisk on a tag marks content that depends on the <b>OPA spike-in</b>: eight genes covered only in that version (RB1, TERT, KEAP1, FOXL2, H3F3A, SMARCA4, STK11, POLE) and five with expanded regions (FGFR2, FGFR3, HRAS, KRAS, PIK3CA). Hover or tap the asterisk to see which applies. Confirm with the molecular laboratory that the spike-in content is in use.</p>'+
         '<p>Targeted panels do not provide genome-wide methylation class or chromosomal copy number profile.</p>',
   heme:'<p><b>Lymphoid v2</b> and <b>CLL Solution</b> cover selected exons for some genes rather than whole genes &mdash; hover or tap a dashed tag to see exactly what is covered. Both detect SNV/INDEL only; the CLL panel additionally reports CNVs at defined loci.</p>'+
        '<p><b>Myeloid GX v2</b> covers 17 genes across the full coding region, 28 at hotspots only, and screens 30 for known fusions.</p>'+
@@ -393,6 +443,12 @@ const NOTES={
 function prep(SET){
   const keys=Object.keys(SET);
   keys.forEach(function(k){
+    ["spikein","expanded"].forEach(function(f){
+      if(typeof SET[k][f]==="string"){
+        SET[k][f]=new Set(SET[k][f].split(/[\s,]+/).filter(Boolean)
+                   .map(function(g){return ALIAS[g]||g;}));
+      }
+    });
     if(SET[k].detail){
       Object.keys(SET[k].detail).forEach(function(f){
         SET[k][f]=((SET[k][f]||"")+" "+Object.keys(SET[k].detail[f]).join(" ")).trim();
@@ -420,14 +476,24 @@ function prep(SET){
 }
 
 const IDX={solid:prep(SOLID), heme:prep(HEME)};
+
+function fieldsIn(m){
+  const SET=m==="solid"?SOLID:HEME;
+  return FIELDS.filter(function(f){
+    return Object.keys(SET).some(function(k){return SET[k][f].size>0;});
+  });
+}
 const DATA={solid:SOLID, heme:HEME};
 
 let mode="solid";
 let picked=[];
 let sortBy="recommended";
+let reqs={};
+let openReq=null;
 const q=document.getElementById("q"), out=document.getElementById("out"),
       sub=document.getElementById("sub"), notes=document.getElementById("notes"),
-      chips=document.getElementById("chips");
+      chips=document.getElementById("chips"),
+      reqbar=document.getElementById("reqbar");
 
 function setMode(m){
   mode=m;
@@ -439,20 +505,66 @@ function setMode(m){
     ? keys.map(function(k){return DATA[m][k].code.split(" /")[0];}).join(" \u00b7 ")
     : "No panels loaded";
   notes.innerHTML=NOTES[m];
+  const avail=fieldsIn(m);
+  Object.keys(reqs).forEach(function(g){
+    reqs[g]=reqs[g].filter(function(f){return avail.indexOf(f)>=0;});
+    if(!reqs[g].length)delete reqs[g];
+  });
+  openReq=null;
+  drawChips();
   refresh();
   q.focus();
 }
 
 function drawChips(){
-  if(!picked.length){chips.innerHTML="";return;}
+  if(!picked.length){chips.innerHTML="";reqbar.innerHTML="";return;}
   chips.innerHTML = picked.map(function(g,i){
-    return '<span class="chip">'+g+'<button data-i="'+i+'" title="Remove">&times;</button></span>';
+    const r=reqs[g]||[];
+    return '<span class="chip'+(r.length?' hasreq':'')+'">'
+      +'<button class="cg" data-g="'+g+'" title="Set required analysis type">'+g+'</button>'
+      +(r.length?'<span class="creq">'+r.map(function(f){return LABEL[f][0];}).join(", ")+'</span>':'')
+      +'<button class="cx" data-i="'+i+'" title="Remove">&times;</button></span>';
   }).join("") + (picked.length>1?'<button class="clear">Clear all</button>':'');
-  chips.querySelectorAll(".chip button").forEach(function(b){
-    b.onclick=function(){picked.splice(+b.dataset.i,1);drawChips();refresh();};
+
+  chips.querySelectorAll(".cx").forEach(function(b){
+    b.onclick=function(){
+      const g=picked[+b.dataset.i];
+      picked.splice(+b.dataset.i,1);
+      delete reqs[g];
+      if(openReq===g)openReq=null;
+      drawChips();refresh();
+    };
+  });
+  chips.querySelectorAll(".cg").forEach(function(b){
+    b.onclick=function(){
+      openReq = openReq===b.dataset.g ? null : b.dataset.g;
+      drawReq();
+    };
   });
   const c=chips.querySelector(".clear");
-  if(c)c.onclick=function(){picked=[];drawChips();refresh();};
+  if(c)c.onclick=function(){picked=[];reqs={};openReq=null;drawChips();refresh();};
+  drawReq();
+}
+
+function drawReq(){
+  if(!openReq || picked.indexOf(openReq)<0){reqbar.innerHTML="";return;}
+  const g=openReq, r=reqs[g]||[];
+  reqbar.innerHTML='<div class="reqbar"><label>Require for '+g+'</label>'
+    + fieldsIn(mode).map(function(f){
+        return '<button class="fchip '+LABEL[f][1]+(r.indexOf(f)>=0?" on":"")
+             + '" data-f="'+f+'">'+LABEL[f][0]+'</button>';
+      }).join("")
+    + '<button class="done">Done</button></div>';
+  reqbar.querySelectorAll(".fchip").forEach(function(b){
+    b.onclick=function(){
+      const f=b.dataset.f, cur=reqs[g]||[], i=cur.indexOf(f);
+      if(i>=0)cur.splice(i,1); else cur.push(f);
+      if(cur.length)reqs[g]=cur; else delete reqs[g];
+      drawChips();refresh();
+    };
+  });
+  const dn=reqbar.querySelector(".done");
+  if(dn)dn.onclick=function(){openReq=null;drawReq();};
 }
 
 function addGene(g){
@@ -481,6 +593,16 @@ function tagHTML(panel,f,gene){
     return '<span class="tip"><span class="tag '+cls+' has-tip">'+txt+'</span>'
          + '<span class="tipbox">'+d+'</span></span>';
   }
+  if(f==="hotspot"){
+    if(panel.spikein && panel.spikein.has(gene))
+      return '<span class="tip"><span class="tag '+cls+' has-tip">'+txt
+           + '<sup class="star">*</sup></span>'
+           + '<span class="tipbox">Only in the spike-in version</span></span>';
+    if(panel.expanded && panel.expanded.has(gene))
+      return '<span class="tip"><span class="tag '+cls+' has-tip">'+txt
+           + '<sup class="star">*</sup></span>'
+           + '<span class="tipbox">Expanded coverage in the spike-in version</span></span>';
+  }
   return '<span class="tag '+cls+'">'+txt+'</span>';
 }
 
@@ -492,11 +614,18 @@ function renderMany(genes){
     const rows=genes.map(function(g){
       return {g:g, found:FIELDS.filter(function(f){return SET[k][f].has(g);})};
     });
-    (rows.some(function(r){return r.found.length;})?present:absent).push({k:k, rows:rows});
+    const meetsAll=genes.every(function(g,gi){
+      const req=reqs[g];
+      if(!req||!req.length)return true;
+      return rows[gi].found.some(function(f){return req.indexOf(f)>=0;});
+    });
+    const ok = meetsAll && rows.some(function(r){return r.found.length;});
+    (ok?present:absent).push({k:k, rows:rows});
   });
 
   present.forEach(function(p){
     p.n=p.rows.filter(function(r){return r.found.length;}).length;
+    p.rows.sort(function(a,b){return (b.found.length?1:0)-(a.found.length?1:0);});
   });
   if(sortBy==="alpha"){
     present.sort(function(a,b){return SET[a.k].name<SET[b.k].name?-1:1;});
@@ -513,8 +642,11 @@ function renderMany(genes){
   html+='<p class="verdict">'+(present.length
       ? (multi?"Covered by ":"Covered by ")+present.length+" of "+keys.length+" panels."
         +(multi?" Not every panel covers every gene.":"")
-      : "Not included in any of the "+keys.length+" panels.")+'</p>';
+      : (Object.keys(reqs).length
+          ? "No panel meets the required analysis types."
+          : "Not included in any of the "+keys.length+" panels."))+'</p>';
 
+  html+='<div class="controls">';
   if(present.length>1){
     html+='<div class="sortbar"><label for="sortsel">Sort by</label>'
       +'<select id="sortsel">'
@@ -522,6 +654,7 @@ function renderMany(genes){
       +'<option value="alpha"'+(sortBy==="alpha"?" selected":"")+'>Panel name</option>'
       +'</select></div>';
   }
+  html+='</div>';
 
   present.forEach(function(p){
     const col="var(--"+ACCENT[keys.indexOf(p.k)%ACCENT.length]+")";
@@ -550,13 +683,17 @@ function renderMany(genes){
   });
 
   if(absent.length){
-    html+='<div class="absent"><b>'+(multi?"Covers none of these genes":"Not included in")+'</b><ul>'
+    html+='<div class="absent"><b>'+(Object.keys(reqs).length
+        ? "Not meeting the requirements"
+        : (multi?"Covers none of these genes":"Not included in"))+'</b><ul>'
       + absent.map(function(a){return '<li>'+SET[a.k].name+'</li>';}).join("") + '</ul></div>';
   }
   out.innerHTML=html;
 
   const sel=out.querySelector("#sortsel");
   if(sel)sel.onchange=function(){sortBy=sel.value;renderMany(genes);};
+
+
 
   out.querySelectorAll(".tag.has-tip").forEach(function(t){
     t.onclick=function(e){
